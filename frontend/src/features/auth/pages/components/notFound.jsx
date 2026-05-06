@@ -17,7 +17,7 @@ const NotFound = () => {
         };
 
         window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove); //cleanup function to unmount when user goes out of the erroer page.
     }, []);
 
     return (
