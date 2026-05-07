@@ -31,7 +31,13 @@ const register = async (req, res) => {
         await newUser.save();
 
         // 5. Send success response
-        res.status(201).json({ message: 'User registered successfully!' });
+        res.status(201).json({ message: 'User registered successfully!',
+                                user: {
+                                    id: newUser._id,
+                                    username: newUser.username,
+                                    email: newUser.email
+                                }
+         });
     } catch (error) {
         console.error('Registration Error:', error);
         res.status(500).json({ message: 'Internal server error during registration.' });
@@ -64,7 +70,13 @@ const login = async (req, res) => {
 
         // 5. Send token in an HTTP-only cookie
         res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ message: 'Login successful!' });
+        res.status(200).json({ message: 'Login successful!',
+                                user: {
+                                    id: user._id,
+                                    username: user.username,
+                                    email: user.email
+                                }
+         });
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ message: 'Internal server error during login.' });

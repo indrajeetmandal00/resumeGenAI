@@ -1,12 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './login.css'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth'
 
 const login = () => {
-  const handleSubmit = (e) => {
+
+  const { loading, handlelogin } = useAuth();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+
+
+  const handleSubmit = async (e) => {     //ui below stays clean and takes the data and performs handlelogin
     e.preventDefault();
     console.log("Form submitted without reloading the page!");
-  };
+    await handlelogin({ email, password });
+    navigate('/');    //after sucessful login get back to home /
+
+
+  }
+  if (loading) return <h1>Loading...</h1>
 
   return (
     <div className="login-container">
@@ -15,11 +30,11 @@ const login = () => {
         <div className="input">
           <div className="inputBox">
             <label>E-mail</label>
-            <input type="text" placeholder="example@xyz.com" />
+            <input onChange={(e) => setEmail(e.target.value)} type="text" placeholder="example@xyz.com" />
           </div>
           <div className="inputBox">
             <label>Password</label>
-            <input type="password" placeholder="······" />
+            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="······" />
           </div>
           <div className="inputBox">
             <input type="submit" value="Sign in" />

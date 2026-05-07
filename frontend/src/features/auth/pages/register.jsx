@@ -1,12 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './login.css'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth'
 
 const register = () => {
-  const handleSubmit = (e) => {
+
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+
+  const { loading, handleRegister } = useAuth();
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form submitted without reloading the page!");
+    await handleRegister(username, email, password);
+    navigate('/');
   };
+
+  if (loading) return <h1>Loading...</h1>
 
   return (
     <div className="login-container">
@@ -15,15 +29,15 @@ const register = () => {
         <div className="input">
           <div className="inputBox">
             <label>Username</label>
-            <input type="text" placeholder="johndoe" />
+            <input onChange={(e) => setUsername(e.target.value)} type="text" placeholder="johndoe" />
           </div>
           <div className="inputBox">
             <label>E-mail</label>
-            <input type="text" placeholder="example@xyz.com" />
+            <input onChange={(e) => setEmail(e.target.value)} type="text" placeholder="example@xyz.com" />
           </div>
           <div className="inputBox">
             <label>Password</label>
-            <input type="password" placeholder="······" />
+            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="······" />
           </div>
           <div className="inputBox">
             <input type="submit" value="Sign up" />
