@@ -2,14 +2,19 @@ import React from 'react'
 import {Router, RouterProvider} from "react-router"
 import {router} from "./app.router.jsx"
 import { AuthContextProvider } from './features/auth/state/auth.context.jsx'
-
+import { InterviewProvider } from './features/interview/state/interview.context.jsx'
 
 
 const App = () => {
   return (
+    
 
     <AuthContextProvider>
-    <RouterProvider router={router}/>
+
+     <InterviewProvider>  
+       <RouterProvider router={router}/>
+    </InterviewProvider>
+
     </AuthContextProvider>
   )
 }
