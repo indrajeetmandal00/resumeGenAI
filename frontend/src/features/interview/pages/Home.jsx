@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Home.css';
+import { useInterview } from '../hooks/userInterview';
+import { useNavigate } from 'react-router';
 
 const Home = () => {
+    const { loading, handleGenerateReport } = useInterview();
+    const navigate = useNavigate();
     const [selfDescription, setSelfDescription] = useState('');
     const [jobDescription, setJobDescription] = useState('');
     const [resumeFile, setResumeFile] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const handleFileChange = (e) => {
@@ -23,46 +26,37 @@ const Home = () => {
             return;
         }
 
-        setIsLoading(true);
-
         try {
-            const formData = new FormData();
-            formData.append('selfDescription', selfDescription);
-            formData.append('jobDescription', jobDescription);
-            formData.append('resume', resumeFile);
+            const result = await handleGenerateReport(jobDescription, selfDescription, resumeFile);
 
-            // Note: Make sure to pass your JWT token if the route is protected
-            const token = localStorage.getItem('token');
+            console.log('Report generated successfully:', result);
 
-            const response = await fetch('/api/interview', {
-                method: 'POST',
-                headers: {
-                    ...(token ? { Authorization: `Bearer ${token}` } : {})
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to generate report');
+            // Redirect using the generated report's ID
+            const reportId = result?.data?._id || result?._id || result?.id || result?.data?.id;
+            if (reportId) {
+                navigate(`/interview/${reportId}`);
+            } else if (result) {
+                // Fallback redirect if generation succeeded but no ID was found
+                navigate('/interview/preview');
             }
-
-            console.log('Report generated successfully:', data);
-            alert('Interview report generated successfully! Check console for details.');
-
-            // TODO: Redirect to a results page or display the report data on the screen
 
         } catch (err) {
             console.error(err);
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+            setError(err.response?.data?.message || err.message || 'Failed to generate report');
         }
     };
 
     return (
         <div className="home-container">
+            {loading && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                    backgroundColor: 'rgba(19, 20, 25, 0.8)', zIndex: 1000,
+                    display: 'flex', justifyContent: 'center', alignItems: 'center'
+                }}>
+                    <h2 style={{ color: '#03a9f4', textTransform: 'uppercase', letterSpacing: '2px' }}>Generating Report... Please wait.</h2>
+                </div>
+            )}
             <form className="home-form" onSubmit={handleSubmit}>
                 <h2>Generate Report</h2>
 
@@ -100,9 +94,15 @@ const Home = () => {
 
                         {error && <div className="error-message">{error}</div>}
 
-                        <button type="submit" disabled={isLoading} className="submit-btn">
-                            {isLoading ? 'Generating Report... Wait' : 'Submit Details'}
-                        </button>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button type="submit" disabled={loading} className="submit-btn" style={{ flex: 1 }}>
+                                {loading ? 'Generating Report... Wait' : 'Submit Details'}
+                            </button>
+
+                            <button type="button" className="submit-btn" style={{ flex: 1, backgroundColor: '#888' }} onClick={() => navigate('/interview/preview')}>
+                                Preview UI
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
