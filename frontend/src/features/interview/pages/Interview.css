@@ -72,3 +72,49 @@ body {
   display: inline-block;
   margin: 0 10px 10px 0;
 }
+
+/* Hides the "print all tabs" section on the normal screen */
+.print-only {
+  display: none;
+}
+
+/* These styles ONLY activate when window.print() is called for the PDF */
+@media print {
+  /* Hides the sidebars and interactive UI elements */
+  .no-print {
+    display: none !important;
+  }
+  /* Shows the hidden section containing all the tabs data */
+  .print-only {
+    display: block !important;
+  }
+  /* Inverts the dark theme to a clean white document for the PDF */
+  body, .neumorphic-shell, .neumorphic-panel, .neumorphic-inset-card, .neumorphic-pill {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+  .panel-center, .panel-right {
+    flex: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  .neumorphic-shell {
+    flex-direction: column !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  .report-text, .skill-gaps-title {
+    color: #000000 !important;
+  }
+  .neumorphic-inset-card {
+    padding: 0 !important;
+  }
+  .neumorphic-pill {
+    border: 1px solid #ccc !important;
+  }
+  .gauge-bg-ring { stroke: #e0e0e0 !important; }
+  .gauge-needle-base { fill: #ffffff !important; stroke: #333 !important; }
+  .gauge-needle-path { stroke: #333 !important; }
+}

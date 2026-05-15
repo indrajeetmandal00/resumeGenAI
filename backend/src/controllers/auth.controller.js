@@ -31,13 +31,14 @@ const register = async (req, res) => {
         await newUser.save();
 
         // 5. Send success response
-        res.status(201).json({ message: 'User registered successfully!',
-                                user: {
-                                    id: newUser._id,
-                                    username: newUser.username,
-                                    email: newUser.email
-                                }
-         });
+        res.status(201).json({
+            message: 'User registered successfully!',
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email
+            }
+        });
     } catch (error) {
         console.error('Registration Error:', error);
         res.status(500).json({ message: 'Internal server error during registration.' });
@@ -54,7 +55,8 @@ const login = async (req, res) => {
         }
 
         // 2. Check if user exists
-        const user = await User.findOne({ email });
+        // Explicitly select the password in case it is set to select: false in the schema
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
@@ -70,13 +72,14 @@ const login = async (req, res) => {
 
         // 5. Send token in an HTTP-only cookie
         res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ message: 'Login successful!',
-                                user: {
-                                    id: user._id,
-                                    username: user.username,
-                                    email: user.email
-                                }
-         });
+        res.status(200).json({
+            message: 'Login successful!',
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ message: 'Internal server error during login.' });
@@ -106,6 +109,9 @@ const logout = async (req, res) => {
 
 const profile = async (req, res) => {
     try {
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ message: 'Not authenticated.' });
+        }
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });

@@ -41,22 +41,22 @@ async function generateInterviewReport(req, res) {
 async function getInterviewReportById(req, res) {
     const { id } = req.params;
     try {
-            const report = await InterviewReportModel.findById(id);
-            if (!report) {
-                return res.status(404).json({ message: 'Interview report not found' });
-            }
-            res.status(200).json({ success: true, data: report });
-    }
-        catch (error) {
-            console.error('Error getting interview report:', error);
-            res.status(500).json({ message: 'Internal server error', error: error.message });
+        const report = await InterviewReportModel.findById(id);
+        if (!report) {
+            return res.status(404).json({ message: 'Interview report not found' });
         }
+        res.status(200).json({ success: true, data: report });
     }
+    catch (error) {
+        console.error('Error getting interview report:', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+}
 
 async function getAllInterviewReports(req, res) {
     try {
-        const reports = await InterviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select('-resume -selfDescription -jobDescription -_v _technicalQuestions -_behavioralQuestions -_skillGaps -_preparationPlan');
-                                                                                                            //we only want title
+        // Exclude heavy fields so we only return metadata (like _id, createdAt, etc.) for the list cards
+        const reports = await InterviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select('-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -roadMap -score');
         res.status(200).json({ success: true, data: reports });
     } catch (error) {
         console.error('Error getting all interview reports:', error);
@@ -64,4 +64,4 @@ async function getAllInterviewReports(req, res) {
     }
 }
 
-module.exports = { generateInterviewReport , getInterviewReportById, getAllInterviewReports }; 
+module.exports = { generateInterviewReport, getInterviewReportById, getAllInterviewReports }; 

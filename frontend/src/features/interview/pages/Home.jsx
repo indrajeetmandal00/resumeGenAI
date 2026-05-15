@@ -1,15 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Home.css';
 import { useInterview } from '../hooks/userInterview';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 const Home = () => {
-    const { loading, handleGenerateReport } = useInterview();
+    const { loading, handleGenerateReport, reports, handleGetAllReports } = useInterview();
     const navigate = useNavigate();
     const [selfDescription, setSelfDescription] = useState('');
     const [jobDescription, setJobDescription] = useState('');
     const [resumeFile, setResumeFile] = useState(null);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        handleGetAllReports().catch(console.error);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Safely extract the array of reports depending on backend response shape
+    const reportsList = Array.isArray(reports) ? reports : (reports?.data || []);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -37,7 +45,7 @@ const Home = () => {
                 navigate(`/interview/${reportId}`);
             } else if (result) {
                 // Fallback redirect if generation succeeded but no ID was found
-                navigate('/interview/preview');
+                navigate('/interview');
             }
 
         } catch (err) {
@@ -94,18 +102,32 @@ const Home = () => {
 
                         {error && <div className="error-message">{error}</div>}
 
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button type="submit" disabled={loading} className="submit-btn" style={{ flex: 1 }}>
-                                {loading ? 'Generating Report... Wait' : 'Submit Details'}
-                            </button>
-
-                            <button type="button" className="submit-btn" style={{ flex: 1, backgroundColor: '#888' }} onClick={() => navigate('/interview/preview')}>
-                                Preview UI
-                            </button>
-                        </div>
+                        <button type="submit" disabled={loading} className="submit-btn">
+                            {loading ? 'Generating Report... Wait' : '✨ Generate'}
+                        </button>
                     </div>
                 </div>
             </form>
+
+            {reportsList.length > 0 && (
+                <div className="reports-section">
+                    <h2 className="reports-title">Generated Reports</h2>
+                    <div className="reports-grid">
+                        {reportsList.map((rep) => {
+                            const id = rep._id || rep.id;
+                            if (!id) return null;
+
+                            return (
+                                <Link key={id} to={`/interview/${id}`} className="report-card">
+                                    <h3>Report #{id.substring(0, 6)}</h3>
+                                    <p>Status: Completed</p>
+                                    <p>Click to view detailed report...</p>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
