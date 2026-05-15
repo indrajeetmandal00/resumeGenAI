@@ -155,7 +155,7 @@ const Interview = () => {
                         {renderContent(activeTab)}
                     </div>
 
-                    {/* PDF View: Hidden on screen, visible only on print. Renders all tabs sequentially so the full report is downloaded at once */}
+                    {/* PDF View: Hidden on screen, visible ONLY WHILE PRINTING. When you call window.print(), the browser literally tries to take a snapshot of your webpage and fit it onto physical, fixed-size pages (like A4 or Letter). If we didn't explicitly hide things, */}
                     <div className="print-only">
                         {menuItems.map((item) => (
                             <div key={`print-${item}`} style={{ marginBottom: '2rem' }}>
@@ -167,7 +167,7 @@ const Interview = () => {
                 </div>
             </section>
 
-            {/* "no-print" hides the right sidebar (score and pills) during PDF generation */}
+            {/* "no-print" INVISIBLE WHILE PRINTING the right sidebar (score and pills) during PDF generation */}
             <aside className="neumorphic-panel panel-right no-print">
                 <h2 className="skill-gaps-title">Match Score</h2>
                 <ScoreGauge score={matchScore} />

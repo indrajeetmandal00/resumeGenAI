@@ -24,11 +24,19 @@ export const router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <Home />
+        element: (      //bcz it is protected, opening / will redirect to /login
+            <Protected>     
+                <Home />
+            </Protected>
+        )
     },
     {
         path: "/interview/:id",
-        element: <Interview />
+        element: (
+            <Protected>
+                <Interview />
+            </Protected>
+        )
     }
 
 ]);

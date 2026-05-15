@@ -73,6 +73,10 @@ body {
   margin: 0 10px 10px 0;
 }
 
+
+//  HIDING UNHIDING WHILE PRINTING !important override the normal rules of styling and force that specific style to be applied
+
+
 /* Hides the "print all tabs" section on the normal screen */
 .print-only {
   display: none;
