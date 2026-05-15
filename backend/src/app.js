@@ -5,8 +5,13 @@ const app = express();
 const cors = require('cors');
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true}));
+    origin: [
+        'http://localhost:5173',
+        // REPLACE this line with your actual live Render frontend URL once you have it:
+        'https://your-frontend-app.onrender.com'
+    ],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
