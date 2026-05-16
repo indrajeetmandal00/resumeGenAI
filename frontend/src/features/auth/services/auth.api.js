@@ -1,16 +1,18 @@
-
 //----this is where we make the API calls from be to fe----- {API} =>STATE=>HOOKS=>COMPONENT/UI
 
 import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 /*
-const api=axios.create(BASE_URL: 'http://localhost:3000/api/auth', 
+const api=axios.create(BASE_URL: `${API_URL}/api/auth`, 
             { withCredentials: true });
         const reponse = await api.get('/profile',{email, password});         
 */
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post('http://localhost:3000/api/auth/login',
+        const response = await axios.post(`${API_URL}/api/auth/login`,
             { email, password });
         return response.data;
     } catch (error) {
@@ -20,7 +22,7 @@ export const login = async (email, password) => {
 
 export const register = async (username, email, password) => {
     try {
-        const response = await axios.post('http://localhost:3000/api/auth/register',
+        const response = await axios.post(`${API_URL}/api/auth/register`,
             { username, email, password },
             { withCredentials: true });    //allows access to cookies thru axios
         return response.data;
@@ -31,7 +33,8 @@ export const register = async (username, email, password) => {
 
 export const logout = async () => {
     try {
-        const response = await axios.post('http://localhost:3000/api/auth/logout',
+        const response = await axios.post(`${API_URL}/api/auth/logout`,
+            {},
             { withCredentials: true });    //this also deals with cookies
         return response.data;
     } catch (error) {
@@ -41,7 +44,7 @@ export const logout = async () => {
 
 export const profile = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/auth/profile',
+        const response = await axios.get(`${API_URL}/api/auth/profile`,
             { withCredentials: true });    //this also deals with cookies
         return response.data;
     } catch (error) {

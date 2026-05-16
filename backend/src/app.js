@@ -4,12 +4,13 @@ const app = express();
 
 const cors = require('cors');
 
+const allowedOrigins = ['http://localhost:5173'];
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        // REPLACE this line with your actual live Render frontend URL once you have it:
-        'https://your-frontend-app.onrender.com'
-    ],
+    origin: allowedOrigins,
     credentials: true
 }));
 
