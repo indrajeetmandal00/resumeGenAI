@@ -1,6 +1,6 @@
 # React + Vite
 
-**Live Demo:** [https://resumeai-n91v.onrender.com](https://resumeai-n91v.onrender.com)
+**Live Demo:** [https://resume-ai-cxkl.onrender.com](https://resume-ai-cxkl.onrender.com)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
